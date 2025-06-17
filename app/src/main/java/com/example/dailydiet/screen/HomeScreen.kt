@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -37,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,48 +59,56 @@ fun HomeScreen(
     onNavigationNewSnack: () -> Unit,
 ) {
 
-    Surface(
-        modifier = modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                scrollBehavior = scrollBehavior,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background
+                ),
+                modifier = Modifier.padding(horizontal = 24.dp),
+                navigationIcon = {
+                    Image(
+                        modifier = Modifier.size(82.dp, 37.dp),
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = null
+                    )
+                },
+                title = {},
+                actions = {
+                    Image(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(shape = CircleShape),
+                        painter = painterResource(id = R.drawable.image_perfil),
+                        contentDescription = null
+                    )
+                }
+            )
+        }
     ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    ),
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    navigationIcon = {
-                        Image(
-                            modifier = Modifier.size(82.dp, 37.dp),
-                            painter = painterResource(id = R.drawable.logo),
-                            contentDescription = null
-                        )
-                    },
-                    title = {},
-                    actions = {
-                        Image(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(shape = CircleShape),
-                            painter = painterResource(id = R.drawable.image_perfil),
-                            contentDescription = null
-                        )
-                    }
-                )
-            }
+
+        LazyColumn(
+            modifier = Modifier
+                .padding(it)
+                .padding(horizontal = 24.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(32.dp),
+            contentPadding = PaddingValues(vertical = 32.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(it)
-                    .padding(horizontal = 24.dp)
-            ) {
+            item {
                 CardPercent(
                     modifier = Modifier.padding(top = 33.dp),
                     onNavigationStatistics = onNavigationStatistics
                 )
+            }
+
+            item {
                 Column(
-                    modifier = Modifier.padding(top = 40.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
@@ -116,37 +123,30 @@ fun HomeScreen(
                         icon = Icons.Default.Add
                     )
                 }
+            }
 
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(32.dp),
-                    contentPadding = PaddingValues(vertical = 32.dp)
-                ) {
-                    items(count = 4) {
-                        Column {
-                            Text(
-                                text = "12.08.22",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                RegisterItem()
-                                RegisterItem()
-                                RegisterItem()
-                                RegisterItem()
-                                RegisterItem()
-                            }
-                        }
+            items(count = 4) {
+                Column {
+                    Text(
+                        text = "12.08.22",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        RegisterItem()
+                        RegisterItem()
+                        RegisterItem()
+                        RegisterItem()
+                        RegisterItem()
                     }
                 }
             }
         }
+
     }
 }
 
