@@ -51,7 +51,8 @@ import com.example.dailydiet.ui.theme.RedMid
 @Composable
 fun NewSnackScreen(
     modifier: Modifier = Modifier,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onNavigateCreateSuccess:(Boolean)-> Unit
 ) {
 
     var withinDietSelected by remember {
@@ -251,7 +252,10 @@ fun NewSnackScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 40.dp),
-                    onClick = {}, label = "Cadastrar refeição"
+                    onClick = {
+                        onNavigateCreateSuccess(withinDietSelected == true)
+                    },
+                    label = "Cadastrar refeição"
                 )
             }
 
@@ -268,7 +272,7 @@ private fun NewSnackLightScreen() {
         dynamicColor = false,
         darkTheme = false
     ) {
-        NewSnackScreen(onBack = {})
+        NewSnackScreen(onBack = {}, onNavigateCreateSuccess = {})
     }
 }
 
@@ -280,6 +284,6 @@ private fun NewSnackDarkScreen() {
         dynamicColor = false,
         darkTheme = true
     ) {
-        NewSnackScreen(onBack = {})
+        NewSnackScreen(onBack = {}, onNavigateCreateSuccess = {})
     }
 }

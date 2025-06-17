@@ -5,5 +5,7 @@ enum class Screen(
 ) {
     HOME("home"),
     STATISTIC("statistic"),
-    NEW_SNACK("new_snack")
+    NEW_SNACK("new_snack"),
+    FEEDBACK_POSITIVE("feedback_positive"),
+    FEEDBACK_NEGATIVE("feedback_negative")
 }

@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.dailydiet.screen.FeedbackNegativeScreen
+import com.example.dailydiet.screen.FeedbackPositiveScreen
 import com.example.dailydiet.screen.HomeScreen
 import com.example.dailydiet.screen.NewSnackScreen
 import com.example.dailydiet.screen.StatisticScreen
@@ -35,9 +37,36 @@ fun Route(
             })
         }
         composable(Screen.NEW_SNACK.route) {
-            NewSnackScreen(onBack = {
-                navController.navigateUp()
-            })
+            NewSnackScreen(
+                onBack = {
+                    navController.navigateUp()
+                },
+                onNavigateCreateSuccess = {
+                    if (it) {
+                        navController.navigate(Screen.FEEDBACK_POSITIVE.route)
+                    } else {
+                        navController.navigate(Screen.FEEDBACK_NEGATIVE.route)
+                    }
+                }
+            )
+        }
+        composable(Screen.FEEDBACK_POSITIVE.route) {
+            FeedbackPositiveScreen {
+                navController.navigate(Screen.HOME.route) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            }
+        }
+        composable(Screen.FEEDBACK_NEGATIVE.route) {
+            FeedbackNegativeScreen {
+                navController.navigate(Screen.HOME.route) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            }
         }
     }
 }

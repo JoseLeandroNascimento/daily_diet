@@ -25,9 +25,10 @@ import com.example.dailydiet.R
 import com.example.dailydiet.composable.DailyDietButton
 import com.example.dailydiet.ui.theme.DailyDietTheme
 import com.example.dailydiet.ui.theme.GreenDark
+import com.example.dailydiet.ui.theme.RedDark
 
 @Composable
-fun FeedbackPositiveScreen(
+fun FeedbackNegativeScreen(
     modifier: Modifier = Modifier,
     onNavigationHome: () -> Unit
 ) {
@@ -48,21 +49,21 @@ fun FeedbackPositiveScreen(
             ) {
 
                 Text(
-                    text = "Continue assim!",
+                    text = "Que pena!",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
-                    color = GreenDark
+                    color = RedDark
                 )
                 Text(
-                    text = "Você continua dentro da dieta. Muito bem!",
+                    text = "Você saiu da dieta dessa vez, mas continue se esforçando e não desista!",
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(bottom = 40.dp, top = 10.dp),
                     textAlign = TextAlign.Center
                 )
                 Image(
                     modifier = Modifier.size(224.dp, 288.dp),
-                    painter = painterResource(id = R.drawable.diet_success),
+                    painter = painterResource(id = R.drawable.diet_failed),
                     contentScale = ContentScale.Crop,
                     contentDescription = null
                 )
@@ -80,18 +81,18 @@ fun FeedbackPositiveScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun FeedbackPositiveLightScreen() {
+private fun FeedbackNegativeLightScreen() {
 
     DailyDietTheme(dynamicColor = false, darkTheme = false) {
-        FeedbackPositiveScreen(onNavigationHome = {})
+        FeedbackNegativeScreen(onNavigationHome = {})
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun FeedbackPositiveDarkScreen() {
+private fun FeedbackNegativeDarkScreen() {
 
     DailyDietTheme(dynamicColor = false, darkTheme = true) {
-        FeedbackPositiveScreen(onNavigationHome = {})
+        FeedbackNegativeScreen(onNavigationHome = {})
     }
 }
