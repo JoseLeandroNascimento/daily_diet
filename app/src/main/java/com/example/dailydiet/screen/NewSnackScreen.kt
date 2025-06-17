@@ -1,7 +1,6 @@
 package com.example.dailydiet.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,27 +26,37 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dailydiet.composable.DailyDietButton
+import com.example.dailydiet.composable.DailyDietToggleButton
 import com.example.dailydiet.ui.theme.DailyDietTheme
 import com.example.dailydiet.ui.theme.Gray200
 import com.example.dailydiet.ui.theme.Gray500
-import com.example.dailydiet.ui.theme.Gray600
+import com.example.dailydiet.ui.theme.GreenDark
+import com.example.dailydiet.ui.theme.GreenLight
 import com.example.dailydiet.ui.theme.GreenMid
+import com.example.dailydiet.ui.theme.RedLight
 import com.example.dailydiet.ui.theme.RedMid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewSnackScreen(
     modifier: Modifier = Modifier,
-    onBack:()-> Unit
+    onBack: () -> Unit
 ) {
+
+    var withinDietSelected by remember {
+        mutableStateOf<Boolean?>(null)
+    }
 
     Surface(
         modifier = modifier.fillMaxSize()
@@ -189,67 +198,55 @@ fun NewSnackScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
 
-                            Surface(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clickable(onClick = {})
-                                    .clip(shape = RoundedCornerShape(6.dp)),
-                                color = Gray600
+                            DailyDietToggleButton(
+                                modifier = Modifier.weight(1f),
+                                selected = withinDietSelected == true,
+                                onSelected = {
+                                    withinDietSelected = true
+                                },
+                                focusBorderColor = GreenDark,
+                                focusContainerColor = GreenLight
                             ) {
-                                Row(
+                                Box(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(14.dp)
-                                            .background(color = GreenMid, shape = CircleShape)
-                                    )
-                                    Spacer(modifier = Modifier.padding(horizontal = 4.dp))
-                                    Text(
-                                        text = "Sim",
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                }
+                                        .size(14.dp)
+                                        .background(color = GreenMid, shape = CircleShape)
+                                )
+                                Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+                                Text(
+                                    text = "Sim",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             }
-
-                            Surface(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clickable(onClick = {})
-                                    .clip(shape = RoundedCornerShape(6.dp)),
-                                color = Gray600
+                            DailyDietToggleButton(
+                                modifier = Modifier.weight(1f),
+                                selected = withinDietSelected == false,
+                                onSelected = {
+                                    withinDietSelected = false
+                                },
+                                focusBorderColor = RedMid,
+                                focusContainerColor = RedLight
                             ) {
-                                Row(
+                                Box(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(14.dp)
-                                            .background(color = RedMid, shape = CircleShape)
-                                    )
-                                    Spacer(modifier = Modifier.padding(horizontal = 4.dp))
-                                    Text(
-                                        text = "Não",
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                }
+                                        .size(14.dp)
+                                        .background(color = RedMid, shape = CircleShape)
+                                )
+                                Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+                                Text(
+                                    text = "Não",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             }
                         }
-                    }
-                }
 
+                    }
+
+                }
                 DailyDietButton(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -257,10 +254,11 @@ fun NewSnackScreen(
                     onClick = {}, label = "Cadastrar refeição"
                 )
             }
+
         }
     }
-
 }
+
 
 @Preview(showBackground = true)
 @Composable
