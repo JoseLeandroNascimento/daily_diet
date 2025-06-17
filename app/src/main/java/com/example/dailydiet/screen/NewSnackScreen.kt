@@ -1,0 +1,287 @@
+package com.example.dailydiet.screen
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.dailydiet.composable.DailyDietButton
+import com.example.dailydiet.ui.theme.DailyDietTheme
+import com.example.dailydiet.ui.theme.Gray200
+import com.example.dailydiet.ui.theme.Gray500
+import com.example.dailydiet.ui.theme.Gray600
+import com.example.dailydiet.ui.theme.GreenMid
+import com.example.dailydiet.ui.theme.RedMid
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NewSnackScreen(
+    modifier: Modifier = Modifier,
+    onBack:()-> Unit
+) {
+
+    Surface(
+        modifier = modifier.fillMaxSize()
+    ) {
+        Scaffold(
+            containerColor = Gray500,
+            topBar = {
+                CenterAlignedTopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Gray500
+                    ),
+                    title = {
+                        Text(
+                            text = "Nova refeição",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = null,
+                            )
+                        }
+                    }
+                )
+            }
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                    )
+                    .padding(start = 24.dp, end = 24.dp, top = 40.dp),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = "",
+                        shape = RoundedCornerShape(6.dp),
+                        onValueChange = {},
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = Gray500,
+                            focusedBorderColor = Gray500,
+                        ),
+                        maxLines = 1,
+                        label = {
+                            Text(
+                                text = "Nome",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = Gray200
+                            )
+                        }
+                    )
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = "",
+                        shape = RoundedCornerShape(6.dp),
+                        onValueChange = {},
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = Gray500,
+                            focusedBorderColor = Gray500,
+                        ),
+                        minLines = 4,
+                        maxLines = 4,
+                        label = {
+                            Text(
+                                text = "Descrição",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = Gray200
+                            )
+                        }
+                    )
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedTextField(
+                            modifier = Modifier.weight(1f),
+                            value = "",
+                            shape = RoundedCornerShape(8.dp),
+                            onValueChange = {},
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Gray500,
+                                focusedBorderColor = Gray500,
+                            ),
+                            maxLines = 1,
+                            label = {
+                                Text(
+                                    text = "Data",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = Gray200
+                                )
+                            }
+                        )
+                        OutlinedTextField(
+                            modifier = Modifier.weight(1f),
+                            value = "",
+                            shape = RoundedCornerShape(6.dp),
+                            onValueChange = {},
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Gray500,
+                                focusedBorderColor = Gray500,
+                            ),
+                            maxLines = 1,
+                            label = {
+                                Text(
+                                    text = "Hora",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = Gray200
+                                )
+                            }
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier.padding(top = 4.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "Está dentro da dieta?",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clickable(onClick = {})
+                                    .clip(shape = RoundedCornerShape(6.dp)),
+                                color = Gray600
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(14.dp)
+                                            .background(color = GreenMid, shape = CircleShape)
+                                    )
+                                    Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+                                    Text(
+                                        text = "Sim",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                            }
+
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clickable(onClick = {})
+                                    .clip(shape = RoundedCornerShape(6.dp)),
+                                color = Gray600
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(14.dp)
+                                            .background(color = RedMid, shape = CircleShape)
+                                    )
+                                    Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+                                    Text(
+                                        text = "Não",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                DailyDietButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 40.dp),
+                    onClick = {}, label = "Cadastrar refeição"
+                )
+            }
+        }
+    }
+
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NewSnackLightScreen() {
+
+    DailyDietTheme(
+        dynamicColor = false,
+        darkTheme = false
+    ) {
+        NewSnackScreen(onBack = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NewSnackDarkScreen() {
+
+    DailyDietTheme(
+        dynamicColor = false,
+        darkTheme = true
+    ) {
+        NewSnackScreen(onBack = {})
+    }
+}

@@ -54,7 +54,11 @@ import com.example.dailydiet.ui.theme.GreenMid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    onNavigationStatistics: () -> Unit,
+    onNavigationNewSnack: () -> Unit,
+) {
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -92,7 +96,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     .padding(it)
                     .padding(horizontal = 24.dp)
             ) {
-                CardPercent(modifier = Modifier.padding(top = 33.dp))
+                CardPercent(
+                    modifier = Modifier.padding(top = 33.dp),
+                    onNavigationStatistics = onNavigationStatistics
+                )
                 Column(
                     modifier = Modifier.padding(top = 40.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -104,7 +111,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     )
                     DailyDietButton(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = {},
+                        onClick = onNavigationNewSnack,
                         label = "Nova refeição",
                         icon = Icons.Default.Add
                     )
@@ -195,7 +202,10 @@ fun RegisterItem(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CardPercent(modifier: Modifier = Modifier) {
+fun CardPercent(
+    modifier: Modifier = Modifier,
+    onNavigationStatistics: () -> Unit
+) {
 
     Box(
         modifier = modifier
@@ -228,7 +238,7 @@ fun CardPercent(modifier: Modifier = Modifier) {
 
         IconButton(
             modifier = Modifier.align(Alignment.TopEnd),
-            onClick = {}
+            onClick = onNavigationStatistics
         ) {
             Icon(
                 tint = GreenDark,
@@ -245,7 +255,7 @@ fun CardPercent(modifier: Modifier = Modifier) {
 private fun HomeLightScreenPreview() {
 
     DailyDietTheme(dynamicColor = false, darkTheme = false) {
-        HomeScreen()
+        HomeScreen(onNavigationStatistics = {}, onNavigationNewSnack = {})
     }
 }
 
@@ -253,6 +263,6 @@ private fun HomeLightScreenPreview() {
 @Composable
 private fun HomeDarktScreenPreview() {
     DailyDietTheme(dynamicColor = false, darkTheme = true) {
-        HomeScreen()
+        HomeScreen(onNavigationStatistics = {}, onNavigationNewSnack = {})
     }
 }

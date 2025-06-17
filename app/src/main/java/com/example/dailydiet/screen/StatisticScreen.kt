@@ -47,7 +47,7 @@ import com.example.dailydiet.ui.theme.RedLight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StatisticScreen(modifier: Modifier = Modifier) {
+fun StatisticScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -60,7 +60,7 @@ fun StatisticScreen(modifier: Modifier = Modifier) {
                         containerColor = GreenLight
                     ),
                     navigationIcon = {
-                        IconButton(onClick = {}) {
+                        IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = null,
@@ -268,7 +268,7 @@ private fun StatisticLightPreview() {
         dynamicColor = false,
         darkTheme = false
     ) {
-        StatisticScreen()
+        StatisticScreen(onBack = {})
     }
 }
 
@@ -280,6 +280,6 @@ private fun StatisticDarkPreview() {
         dynamicColor = false,
         darkTheme = true
     ) {
-        StatisticScreen()
+        StatisticScreen(onBack = {})
     }
 }

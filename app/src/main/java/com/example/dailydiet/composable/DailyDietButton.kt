@@ -2,6 +2,7 @@ package com.example.dailydiet.composable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -31,7 +32,7 @@ fun DailyDietButton(
 ) {
 
     Button(
-        modifier = modifier,
+        modifier = modifier.height(50.dp),
         shape = RoundedCornerShape(6.dp),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
