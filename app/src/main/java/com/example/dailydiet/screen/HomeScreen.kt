@@ -3,6 +3,7 @@ package com.example.dailydiet.screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,6 +58,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigationStatistics: () -> Unit,
     onNavigationNewSnack: () -> Unit,
+    onNavigationItem: () -> Unit
 ) {
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -92,13 +94,14 @@ fun HomeScreen(
         }
     ) {
 
+
         LazyColumn(
             modifier = Modifier
                 .padding(it)
                 .padding(horizontal = 24.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(32.dp),
-            contentPadding = PaddingValues(vertical = 32.dp)
+            contentPadding = PaddingValues(vertical = 32.dp),
         ) {
             item {
                 CardPercent(
@@ -137,11 +140,11 @@ fun HomeScreen(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        RegisterItem()
-                        RegisterItem()
-                        RegisterItem()
-                        RegisterItem()
-                        RegisterItem()
+                        RegisterItem(onSelectItem = onNavigationItem)
+                        RegisterItem(onSelectItem = onNavigationItem)
+                        RegisterItem(onSelectItem = onNavigationItem)
+                        RegisterItem(onSelectItem = onNavigationItem)
+                        RegisterItem(onSelectItem = onNavigationItem)
                     }
                 }
             }
@@ -151,14 +154,16 @@ fun HomeScreen(
 }
 
 @Composable
-fun RegisterItem(modifier: Modifier = Modifier) {
+fun RegisterItem(modifier: Modifier = Modifier, onSelectItem: () -> Unit) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.onSurface,
         ),
         border = BorderStroke(width = 1.dp, color = Gray500),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onSelectItem)
     ) {
 
         Row(
@@ -255,7 +260,7 @@ fun CardPercent(
 private fun HomeLightScreenPreview() {
 
     DailyDietTheme(dynamicColor = false, darkTheme = false) {
-        HomeScreen(onNavigationStatistics = {}, onNavigationNewSnack = {})
+        HomeScreen(onNavigationStatistics = {}, onNavigationNewSnack = {}, onNavigationItem = {})
     }
 }
 
@@ -263,6 +268,6 @@ private fun HomeLightScreenPreview() {
 @Composable
 private fun HomeDarktScreenPreview() {
     DailyDietTheme(dynamicColor = false, darkTheme = true) {
-        HomeScreen(onNavigationStatistics = {}, onNavigationNewSnack = {})
+        HomeScreen(onNavigationStatistics = {}, onNavigationNewSnack = {}, onNavigationItem = {})
     }
 }

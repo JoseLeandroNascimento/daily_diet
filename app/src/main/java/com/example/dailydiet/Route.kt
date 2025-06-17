@@ -9,6 +9,7 @@ import com.example.dailydiet.screen.FeedbackNegativeScreen
 import com.example.dailydiet.screen.FeedbackPositiveScreen
 import com.example.dailydiet.screen.HomeScreen
 import com.example.dailydiet.screen.NewSnackScreen
+import com.example.dailydiet.screen.SnackViewScreen
 import com.example.dailydiet.screen.StatisticScreen
 
 @Composable
@@ -28,6 +29,9 @@ fun Route(
                 },
                 onNavigationNewSnack = {
                     navController.navigate(Screen.NEW_SNACK.route)
+                },
+                onNavigationItem = {
+                    navController.navigate(Screen.SNACK_VIEW.route)
                 }
             )
         }
@@ -67,6 +71,11 @@ fun Route(
                     }
                 }
             }
+        }
+        composable(Screen.SNACK_VIEW.route) {
+            SnackViewScreen(onBack = {
+                navController.navigateUp()
+            })
         }
     }
 }

@@ -7,5 +7,6 @@ enum class Screen(
     STATISTIC("statistic"),
     NEW_SNACK("new_snack"),
     FEEDBACK_POSITIVE("feedback_positive"),
-    FEEDBACK_NEGATIVE("feedback_negative")
+    FEEDBACK_NEGATIVE("feedback_negative"),
+    SNACK_VIEW("snack_view")
 }
