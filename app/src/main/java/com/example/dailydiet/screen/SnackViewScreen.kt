@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.BorderColor
@@ -25,13 +27,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dailydiet.composable.DailyDietButton
+import com.example.dailydiet.composable.DailyDietDialog
 import com.example.dailydiet.ui.theme.DailyDietTheme
 import com.example.dailydiet.ui.theme.Gray600
 import com.example.dailydiet.ui.theme.GreenLight
@@ -41,8 +49,28 @@ import com.example.dailydiet.ui.theme.GreenMid
 @Composable
 fun SnackViewScreen(
     modifier: Modifier = Modifier,
-    onBack:()-> Unit
+    onBack: () -> Unit
 ) {
+
+    var showDialogConfirmDelete by remember { mutableStateOf(false) }
+
+
+    if (showDialogConfirmDelete) {
+        DailyDietDialog(
+            title = "Deseja realmente excluir o registro da refeição?",
+            confirmLabel = "Sim, excluir",
+            cancelLabel = "Cancelar",
+            onConfirm = {
+                showDialogConfirmDelete = false
+            },
+            onCancel = {
+                showDialogConfirmDelete = false
+            },
+            onDismissRequest = {
+                showDialogConfirmDelete = false
+            }
+        )
+    }
 
     Scaffold(
         containerColor = GreenLight,
@@ -69,6 +97,7 @@ fun SnackViewScreen(
             )
         }
     ) { innerPadding ->
+
         Surface(
             modifier = modifier
                 .padding(innerPadding)
@@ -78,17 +107,17 @@ fun SnackViewScreen(
             ),
             color = MaterialTheme.colorScheme.background
         ) {
-            Box(
+
+
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 24.dp),
-                contentAlignment = Alignment.BottomCenter
+                    .padding(horizontal = 24.dp, vertical = 40.dp)
             ) {
-
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 40.dp)
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
                 ) {
                     Text(
                         text = "X-tudo",
@@ -101,11 +130,12 @@ fun SnackViewScreen(
                         text = "Sanduíche de pão integral com atum e salada de alface e tomate",
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.Justify,
                         fontSize = 16.sp
                     )
 
                     Text(
-                        modifier = Modifier.padding(top = 24.dp),
+                        modifier = Modifier.padding(top = 24.dp, bottom = 4.dp),
                         text = "Data e hora",
                         style = MaterialTheme.typography.titleSmall,
                         fontSize = 14.sp,
@@ -143,7 +173,9 @@ fun SnackViewScreen(
                 }
 
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 40.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     DailyDietButton(
@@ -155,12 +187,13 @@ fun SnackViewScreen(
                     DailyDietButton(
                         outline = true,
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = {},
+                        onClick = { showDialogConfirmDelete = !showDialogConfirmDelete },
                         label = "Excluir refeição",
                         icon = Icons.Outlined.Delete
                     )
                 }
             }
+
         }
     }
 }
