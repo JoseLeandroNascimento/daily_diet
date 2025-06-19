@@ -59,7 +59,7 @@ dependencies {
     val room_version = "2.7.2"
 
     implementation("androidx.room:room-runtime:$room_version")
-    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("com.google.dagger:hilt-android:2.56.2")
     ksp("androidx.room:room-compiler:$room_version")
     ksp("com.google.dagger:hilt-compiler:2.56.2")

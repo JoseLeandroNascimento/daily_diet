@@ -1,6 +1,9 @@
 package com.example.dailydiet.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +19,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,7 +32,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,7 +47,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.dailydiet.composable.DailyDietButton
 import com.example.dailydiet.composable.DailyDietToggleButton
 import com.example.dailydiet.ui.theme.DailyDietTheme
@@ -57,12 +65,21 @@ import com.example.dailydiet.viewModel.CreateSnackViewModel
 fun NewSnackScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
-    viewModel: CreateSnackViewModel = viewModel(),
+    viewModel: CreateSnackViewModel = hiltViewModel(),
     onNavigateCreateSuccess: (Boolean) -> Unit
 ) {
 
-    var withinDietSelected by remember {
-        mutableStateOf<Boolean?>(null)
+    val dateInteraction = remember { MutableInteractionSource() }
+    val datePressed by dateInteraction.collectIsPressedAsState()
+    val stateDatePicker = rememberDatePickerState()
+    var showDate by remember { mutableStateOf(false) }
+
+    LaunchedEffect(datePressed) {
+
+        if (datePressed) {
+            showDate = !showDate
+        }
+
     }
 
     Surface(
@@ -166,12 +183,16 @@ fun NewSnackScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         OutlinedTextField(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { showDate = !showDate },
                             value = viewModel.formState.date.value,
                             shape = RoundedCornerShape(8.dp),
                             onValueChange = {
                                 viewModel.dateUpdate(it)
                             },
+                            interactionSource = dateInteraction,
+                            readOnly = true,
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedBorderColor = Gray500,
                                 focusedBorderColor = Gray500,
@@ -189,6 +210,25 @@ fun NewSnackScreen(
                                 )
                             }
                         )
+
+                        if (showDate) {
+                            DatePickerDialog(
+
+                                onDismissRequest = {
+                                    showDate = false
+                                },
+                                confirmButton = {}
+                            ) {
+
+                                DatePicker(
+                                    state = stateDatePicker,
+                                    colors = DatePickerDefaults.colors(
+                                        containerColor = MaterialTheme.colorScheme.background
+                                    ),
+
+                                    )
+                            }
+                        }
                         OutlinedTextField(
                             modifier = Modifier.weight(1f),
                             value = viewModel.formState.time.value,
@@ -283,7 +323,7 @@ fun NewSnackScreen(
                         .fillMaxWidth()
                         .padding(bottom = 40.dp),
                     onClick = {
-                        onNavigateCreateSuccess(withinDietSelected == true)
+                        viewModel.save()
                     },
                     label = "Cadastrar refeição"
                 )

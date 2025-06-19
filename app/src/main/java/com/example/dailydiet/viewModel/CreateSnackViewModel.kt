@@ -4,9 +4,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.dailydiet.data.Snack
+import com.example.dailydiet.data.SnackRepository
 import com.example.dailydiet.model.FieldState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import jakarta.inject.Inject
+import kotlinx.coroutines.launch
+import java.util.Date
+
 
 data class FormState(
     val name: FieldState<String> = FieldState(value = ""),
@@ -17,7 +23,9 @@ data class FormState(
 )
 
 @HiltViewModel
-class CreateSnackViewModel @Inject constructor() : ViewModel() {
+class CreateSnackViewModel @Inject constructor(
+    private val repo: SnackRepository
+) : ViewModel() {
 
     var formState by mutableStateOf(FormState())
         private set
@@ -57,6 +65,20 @@ class CreateSnackViewModel @Inject constructor() : ViewModel() {
         formState = formState.copy(
             isInside = FieldState(value = newIsInside)
         )
+    }
+
+    fun save() {
+
+        val data = Snack(
+            name = formState.name.value,
+            description = formState.description.value,
+            timestamp = Date().time,
+            isInside = formState.isInside.value!!
+        )
+       viewModelScope.launch {
+           repo.save(data)
+       }
+
     }
 
 }
