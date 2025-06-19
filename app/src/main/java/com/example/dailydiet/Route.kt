@@ -20,7 +20,7 @@ fun Route(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Screen.HOME.route
+        startDestination = Screen.NEW_SNACK.route
     ) {
         composable(Screen.HOME.route) {
             HomeScreen(

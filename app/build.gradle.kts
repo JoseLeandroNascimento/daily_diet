@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
+
 }
 
 android {
@@ -30,7 +33,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
@@ -39,8 +44,25 @@ android {
     }
 }
 
+buildscript{
+    repositories{
+        mavenCentral()
+    }
+    dependencies {
+        // other plugins...
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.56.2")
+    }
+}
+
 dependencies {
 
+    val room_version = "2.7.2"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
+    implementation("com.google.dagger:hilt-android:2.56.2")
+    ksp("androidx.room:room-compiler:$room_version")
+    ksp("com.google.dagger:hilt-compiler:2.56.2")
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.core.ktx)

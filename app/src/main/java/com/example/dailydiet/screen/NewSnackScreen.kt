@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -33,9 +34,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dailydiet.composable.DailyDietButton
 import com.example.dailydiet.composable.DailyDietToggleButton
 import com.example.dailydiet.ui.theme.DailyDietTheme
@@ -46,13 +50,15 @@ import com.example.dailydiet.ui.theme.GreenLight
 import com.example.dailydiet.ui.theme.GreenMid
 import com.example.dailydiet.ui.theme.RedLight
 import com.example.dailydiet.ui.theme.RedMid
+import com.example.dailydiet.viewModel.CreateSnackViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewSnackScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
-    onNavigateCreateSuccess:(Boolean)-> Unit
+    viewModel: CreateSnackViewModel = viewModel(),
+    onNavigateCreateSuccess: (Boolean) -> Unit
 ) {
 
     var withinDietSelected by remember {
@@ -107,9 +113,15 @@ fun NewSnackScreen(
                 ) {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = "",
+                        value = viewModel.formState.name.value,
                         shape = RoundedCornerShape(6.dp),
-                        onValueChange = {},
+                        onValueChange = {
+                            viewModel.nameUpdate(it)
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                            keyboardType = KeyboardType.Text
+                        ),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = Gray500,
                             focusedBorderColor = Gray500,
@@ -126,9 +138,15 @@ fun NewSnackScreen(
 
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = "",
+                        value = viewModel.formState.description.value,
                         shape = RoundedCornerShape(6.dp),
-                        onValueChange = {},
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                            keyboardType = KeyboardType.Text
+                        ),
+                        onValueChange = {
+                            viewModel.descriptionUpdate(it)
+                        },
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = Gray500,
                             focusedBorderColor = Gray500,
@@ -149,12 +167,18 @@ fun NewSnackScreen(
                     ) {
                         OutlinedTextField(
                             modifier = Modifier.weight(1f),
-                            value = "",
+                            value = viewModel.formState.date.value,
                             shape = RoundedCornerShape(8.dp),
-                            onValueChange = {},
+                            onValueChange = {
+                                viewModel.dateUpdate(it)
+                            },
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedBorderColor = Gray500,
                                 focusedBorderColor = Gray500,
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Next,
+                                keyboardType = KeyboardType.Number
                             ),
                             maxLines = 1,
                             label = {
@@ -167,9 +191,15 @@ fun NewSnackScreen(
                         )
                         OutlinedTextField(
                             modifier = Modifier.weight(1f),
-                            value = "",
+                            value = viewModel.formState.time.value,
                             shape = RoundedCornerShape(6.dp),
-                            onValueChange = {},
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Next,
+                                keyboardType = KeyboardType.Number
+                            ),
+                            onValueChange = {
+                                viewModel.timeUpdate(it)
+                            },
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedBorderColor = Gray500,
                                 focusedBorderColor = Gray500,
@@ -201,9 +231,9 @@ fun NewSnackScreen(
 
                             DailyDietToggleButton(
                                 modifier = Modifier.weight(1f),
-                                selected = withinDietSelected == true,
+                                selected = viewModel.formState.isInside.value == true,
                                 onSelected = {
-                                    withinDietSelected = true
+                                    viewModel.isInsideUpdate(true)
                                 },
                                 focusBorderColor = GreenDark,
                                 focusContainerColor = GreenLight
@@ -223,9 +253,9 @@ fun NewSnackScreen(
                             }
                             DailyDietToggleButton(
                                 modifier = Modifier.weight(1f),
-                                selected = withinDietSelected == false,
+                                selected = viewModel.formState.isInside.value == false,
                                 onSelected = {
-                                    withinDietSelected = false
+                                    viewModel.isInsideUpdate(false)
                                 },
                                 focusBorderColor = RedMid,
                                 focusContainerColor = RedLight
