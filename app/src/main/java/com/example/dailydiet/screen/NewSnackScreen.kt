@@ -1,5 +1,6 @@
 package com.example.dailydiet.screen
 
+import android.app.TimePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,8 +32,11 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -59,6 +64,7 @@ import com.example.dailydiet.ui.theme.GreenMid
 import com.example.dailydiet.ui.theme.RedLight
 import com.example.dailydiet.ui.theme.RedMid
 import com.example.dailydiet.viewModel.CreateSnackViewModel
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,14 +76,23 @@ fun NewSnackScreen(
 ) {
 
     val dateInteraction = remember { MutableInteractionSource() }
+    val timeInteraction = remember { MutableInteractionSource() }
+    val timePressed by timeInteraction.collectIsPressedAsState()
     val datePressed by dateInteraction.collectIsPressedAsState()
     val stateDatePicker = rememberDatePickerState()
     var showDate by remember { mutableStateOf(false) }
+    var showTime by remember { mutableStateOf(false) }
+    val stateTime = rememberTimePickerState()
 
-    LaunchedEffect(datePressed) {
+
+    LaunchedEffect(datePressed, timePressed) {
 
         if (datePressed) {
             showDate = !showDate
+        }
+
+        if (timePressed) {
+            showTime = !showTime
         }
 
     }
@@ -184,8 +199,7 @@ fun NewSnackScreen(
                     ) {
                         OutlinedTextField(
                             modifier = Modifier
-                                .weight(1f)
-                                .clickable { showDate = !showDate },
+                                .weight(1f),
                             value = viewModel.formState.date.value,
                             shape = RoundedCornerShape(8.dp),
                             onValueChange = {
@@ -213,20 +227,26 @@ fun NewSnackScreen(
 
                         if (showDate) {
                             DatePickerDialog(
-
+                                shape = RoundedCornerShape(6.dp),
+                                colors = DatePickerDefaults.colors(
+                                    containerColor = MaterialTheme.colorScheme.background
+                                ),
                                 onDismissRequest = {
                                     showDate = false
                                 },
-                                confirmButton = {}
+                                confirmButton = {
+                                    DailyDietButton(onClick = {
+                                        showDate = false
+                                    }, label = "Confirmar")
+                                }
                             ) {
 
                                 DatePicker(
                                     state = stateDatePicker,
                                     colors = DatePickerDefaults.colors(
                                         containerColor = MaterialTheme.colorScheme.background
-                                    ),
-
                                     )
+                                )
                             }
                         }
                         OutlinedTextField(
@@ -237,6 +257,8 @@ fun NewSnackScreen(
                                 imeAction = ImeAction.Next,
                                 keyboardType = KeyboardType.Number
                             ),
+                            interactionSource = timeInteraction,
+                            readOnly = true,
                             onValueChange = {
                                 viewModel.timeUpdate(it)
                             },
@@ -253,6 +275,40 @@ fun NewSnackScreen(
                                 )
                             }
                         )
+
+
+                        if (showTime) {
+
+                            DatePickerDialog(
+                                shape = RoundedCornerShape(6.dp),
+                                colors = DatePickerDefaults.colors(
+                                    containerColor = MaterialTheme.colorScheme.background
+                                ),
+                                onDismissRequest = {
+                                    showTime = false
+                                },
+                                confirmButton = {
+                                    DailyDietButton(onClick = {
+                                        showTime = false
+                                    }, label = "Confirmar")
+                                }
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+
+                                ) {
+                                    TimePicker(
+                                        state = stateTime,
+                                        colors = TimePickerDefaults.colors(
+                                            containerColor = MaterialTheme.colorScheme.background
+                                        )
+                                    )
+                                }
+                            }
+                        }
+
                     }
 
                     Column(
