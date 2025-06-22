@@ -2,13 +2,16 @@ package com.example.dailydiet.composable
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,6 +33,7 @@ fun DailyDietButton(
     onClick: () -> Unit,
     label: String,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
     icon: ImageVector? = null,
 ) {
 
@@ -39,6 +43,7 @@ fun DailyDietButton(
         label = label,
         enabled = enabled,
         icon = icon,
+        isLoading = isLoading,
         outline = false
     )
 
@@ -50,9 +55,11 @@ fun DailyDietButton(
     onClick: () -> Unit,
     label: String,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
     icon: ImageVector? = null,
     outline: Boolean = false
 ) {
+
 
     Button(
         modifier = modifier.height(50.dp),
@@ -79,20 +86,34 @@ fun DailyDietButton(
         ),
         onClick = onClick
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            icon?.let {
-                Icon(imageVector = it, contentDescription = null)
+
+        Box(
+            contentAlignment = Alignment.Center
+        ){
+            if (isLoading) {
+                CircularProgressIndicator(
+                    strokeWidth = 4.dp,
+                    modifier = Modifier
+                        .size(20.dp)
+                )
+            }else{
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    icon?.let {
+                        Icon(imageVector = it, contentDescription = null)
+                    }
+                    Text(
+                        text = label,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
             }
-            Text(
-                text = label,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-            )
         }
     }
+
 
 }
 
@@ -107,6 +128,7 @@ private fun DailyDietButtonLight() {
             label = "Nova refeição",
             onClick = {},
             icon = Icons.Default.Add,
+            isLoading = true,
             outline = true
         )
     }
@@ -121,6 +143,7 @@ private fun DailyDietButtonDark() {
     ) {
         DailyDietButton(
             label = "Nova refeição",
+            isLoading = true,
             onClick = {},
             icon = Icons.Default.Add
         )

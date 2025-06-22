@@ -110,6 +110,14 @@ fun NewSnackScreen(
         }
     }
 
+    LaunchedEffect(viewModel.formState.onNavigateCreateSuccess) {
+
+        viewModel.formState.onNavigateCreateSuccess?.let {
+            onNavigateCreateSuccess(it)
+        }
+    }
+
+
     LaunchedEffect(datePressed, timePressed) {
 
         if (datePressed) {
@@ -388,6 +396,7 @@ fun NewSnackScreen(
                                     text = "Sim",
                                     style = MaterialTheme.typography.titleSmall,
                                     fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.SemiBold
                                 )
                             }
@@ -410,6 +419,7 @@ fun NewSnackScreen(
                                     text = "Não",
                                     style = MaterialTheme.typography.titleSmall,
                                     fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.SemiBold
                                 )
                             }
@@ -422,6 +432,8 @@ fun NewSnackScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 40.dp),
+                    isLoading = viewModel.formState.isLoading,
+                    enabled = viewModel.formState.formIsValid,
                     onClick = {
                         viewModel.save()
                     },

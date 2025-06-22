@@ -8,12 +8,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.dailydiet.data.Snack
 import com.example.dailydiet.data.SnackRepository
 import com.example.dailydiet.model.FieldState
+import com.example.dailydiet.model.Response
+import com.example.dailydiet.validator.DateValidator
+import com.example.dailydiet.validator.DescriptionValidator
+import com.example.dailydiet.validator.NameValidator
+import com.example.dailydiet.validator.TimeValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 
 data class FormState(
@@ -21,7 +24,10 @@ data class FormState(
     val description: FieldState<String> = FieldState(value = ""),
     val date: FieldState<String> = FieldState(value = ""),
     val time: FieldState<String> = FieldState(value = ""),
-    val isInside: FieldState<Boolean?> = FieldState(value = null),
+    val isInside: FieldState<Boolean?> = FieldState(value = null, valid = false),
+    val formIsValid: Boolean = false,
+    val isLoading: Boolean = false,
+    val onNavigateCreateSuccess: Boolean? = null,
 )
 
 @HiltViewModel
@@ -34,43 +40,38 @@ class CreateSnackViewModel @Inject constructor(
 
     fun nameUpdate(newName: String) {
 
-        var error: String? = null
-
-        if (newName.isEmpty()) {
-            error = "O nome é obrigatório"
-        }
+        var error: String? = NameValidator.validator(newName)
 
         formState = formState.copy(
-            name = FieldState(value = newName, error = error)
+            name = FieldState(value = newName, error = error, valid = error == null)
         )
+
+        updateStateForm()
     }
 
     fun descriptionUpdate(newDescription: String) {
 
-        var error: String? = null
-
-        if (newDescription.isEmpty()) {
-            error = "A descrição é obrigatório"
-        }
+        var error: String? = DescriptionValidator.validator(newDescription)
 
         formState = formState.copy(
-            description = FieldState(value = newDescription, error = error)
+            description = FieldState(value = newDescription, error = error, valid = error == null)
         )
+
+        updateStateForm()
+
     }
 
     fun dateUpdate(newDate: String) {
         val dateContainsDigits = newDate.filter {
             it in "0123456789/"
         }
+        var error: String? = DateValidator.validator(dateContainsDigits)
 
-        var error: String? = null
-
-        if (!isDataValida(newDate)) {
-            error = "Formato de data inválida"
-        }
         formState = formState.copy(
-            date = FieldState(value = dateContainsDigits, error = error)
+            date = FieldState(value = dateContainsDigits, error = error, valid = error == null)
         )
+        updateStateForm()
+
     }
 
     fun timeUpdate(newTime: String) {
@@ -79,44 +80,44 @@ class CreateSnackViewModel @Inject constructor(
             it in "0123456789:"
         }
 
-        var error: String? = null
+        val error = TimeValidator.validator(newTime)
 
-        if (!isHoraValida(newTime)) {
-            error = "Formato de hora inválida"
+        formState = formState.copy(
+            time = FieldState(value = timeContainsDigits, error = error, valid = error == null)
+        )
+
+        updateStateForm()
+
+    }
+
+    fun isInsideUpdate(newIsInside: Boolean?) {
+
+        val error: String? = newIsInside?.let {
+            "Informe se está dentro da dieta"
         }
 
         formState = formState.copy(
-            time = FieldState(value = timeContainsDigits)
+            isInside = FieldState(value = newIsInside, error = error, valid = error != null)
         )
+        updateStateForm()
+
     }
 
-    fun isInsideUpdate(newIsInside: Boolean) {
+    private fun updateStateForm() {
+
+        val formValid = with(formState) {
+            name.valid &&
+                    description.valid &&
+                    time.valid &&
+                    date.valid &&
+                    isInside.valid
+        }
+
         formState = formState.copy(
-            isInside = FieldState(value = newIsInside)
+            formIsValid = formValid
         )
     }
 
-    fun isDataValida(data: String): Boolean {
-        return try {
-            val formato = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            formato.isLenient = false
-            formato.parse(data)
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    fun isHoraValida(hora: String): Boolean {
-        return try {
-            val formato = SimpleDateFormat("HH:mm", Locale.getDefault())
-            formato.isLenient = false
-            formato.parse(hora)
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
 
     fun save() {
 
@@ -139,8 +140,23 @@ class CreateSnackViewModel @Inject constructor(
             timestamp = calendar.time.time,
             isInside = formState.isInside.value!!
         )
+        formState = formState.copy(isLoading = true)
         viewModelScope.launch {
-            repo.save(data)
+            val result = repo.save(data)
+
+            when (result) {
+                is Response.Success -> {
+                    formState = formState.copy(
+                        isLoading = false,
+                        onNavigateCreateSuccess = data.isInside,
+                    )
+                }
+
+                is Response.Error -> {
+                    formState = formState.copy(isLoading = false)
+
+                }
+            }
         }
 
     }
