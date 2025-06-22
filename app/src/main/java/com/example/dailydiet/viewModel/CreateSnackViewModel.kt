@@ -3,6 +3,7 @@ package com.example.dailydiet.viewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dailydiet.data.Snack
@@ -16,7 +17,10 @@ import com.example.dailydiet.validator.TimeValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 
 data class FormState(
@@ -25,6 +29,7 @@ data class FormState(
     val date: FieldState<String> = FieldState(value = ""),
     val time: FieldState<String> = FieldState(value = ""),
     val isInside: FieldState<Boolean?> = FieldState(value = null, valid = false),
+    val snackId: Int? = null,
     val formIsValid: Boolean = false,
     val isLoading: Boolean = false,
     val onNavigateCreateSuccess: Boolean? = null,
@@ -32,11 +37,64 @@ data class FormState(
 
 @HiltViewModel
 class CreateSnackViewModel @Inject constructor(
-    private val repo: SnackRepository
+    private val repo: SnackRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    val formatterDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val formatterTime = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+    private val snackId: Int? = savedStateHandle["snackId"]
 
     var formState by mutableStateOf(FormState())
         private set
+
+    init {
+
+        formState = formState.copy(
+            snackId = snackId
+        )
+
+        viewModelScope.launch {
+
+
+            snackId?.let { id ->
+
+                val response = repo.finById(id)
+
+                when (response) {
+
+                    is Response.Success -> {
+                        formState = formState.copy(
+                            name = FieldState(value = response.data.name, valid = true),
+                            description = FieldState(
+                                value = response.data.description,
+                                valid = true
+                            ),
+                            date = FieldState(
+                                value = formatterDate.format(Date(response.data.timestamp)),
+                                valid = true
+                            ),
+                            time = FieldState(
+                                value = formatterTime.format(Date(response.data.timestamp)),
+                                valid = true
+                            ),
+                            isInside = FieldState(value = response.data.isInside, valid = true),
+                        )
+                        updateStateForm()
+                    }
+
+                    is Response.Error -> {
+
+                    }
+                }
+            }
+
+
+        }
+
+    }
+
 
     fun nameUpdate(newName: String) {
 
@@ -132,17 +190,23 @@ class CreateSnackViewModel @Inject constructor(
         val minuto = horaArray[1]
 
         val calendar = Calendar.getInstance()
-        calendar.set(ano.toInt(), mes.toInt(), dia.toInt(), hora.toInt(), minuto.toInt())
+        calendar.set(ano.toInt(), mes.toInt() - 1, dia.toInt(), hora.toInt(), minuto.toInt())
 
-        val data = Snack(
+        var data = Snack(
             name = formState.name.value,
             description = formState.description.value,
             timestamp = calendar.time.time,
             isInside = formState.isInside.value!!
         )
         formState = formState.copy(isLoading = true)
+
         viewModelScope.launch {
-            val result = repo.save(data)
+
+
+            val result = snackId?.let {
+                data = data.copy(id = snackId)
+                repo.update(data)
+            } ?: repo.save(data)
 
             when (result) {
                 is Response.Success -> {

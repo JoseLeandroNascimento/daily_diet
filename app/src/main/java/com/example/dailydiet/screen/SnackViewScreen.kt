@@ -59,6 +59,7 @@ import java.util.Locale
 fun SnackViewScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
+    onNavigationEdit:(Int)-> Unit,
     viewModel: SnackViewModel = hiltViewModel()
 ) {
 
@@ -225,7 +226,7 @@ fun SnackViewScreen(
                     ) {
                         DailyDietButton(
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = {},
+                            onClick = {onNavigationEdit(snack.id)},
                             label = "Editar refeição",
                             icon = Icons.Outlined.BorderColor
                         )
@@ -254,7 +255,7 @@ private fun SnackViewLightPreview() {
         dynamicColor = false,
         darkTheme = false
     ) {
-        SnackViewScreen(onBack = {})
+        SnackViewScreen(onBack = {}, onNavigationEdit = {})
     }
 }
 
@@ -266,6 +267,6 @@ private fun SnackViewDarkPreview() {
         dynamicColor = false,
         darkTheme = true
     ) {
-        SnackViewScreen(onBack = {})
+        SnackViewScreen(onBack = {}, onNavigationEdit = {})
     }
 }

@@ -18,6 +18,16 @@ class SnackRepository @Inject constructor(private val snackDao: SnackDao) {
         }
     }
 
+    suspend fun update(data: Snack): Response<Snack> {
+        try {
+            snackDao.update(data)
+            return Response.Success(data = data)
+
+        } catch (e: Exception) {
+            return Response.Error(message = e.message ?: "Não foi possível alterar os dados")
+        }
+    }
+
     fun findAll(): Response<Flow<List<Snack>>> {
 
         try {

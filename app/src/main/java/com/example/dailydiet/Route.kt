@@ -2,6 +2,8 @@ package com.example.dailydiet
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavArgument
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -46,6 +48,25 @@ fun Route(
         }
         composable(Screen.NEW_SNACK.route) {
             NewSnackScreen(
+                label = "Nova refeição",
+                onBack = {
+                    navController.navigateUp()
+                },
+                onNavigateCreateSuccess = {
+                    if (it) {
+                        navController.navigate(Screen.FEEDBACK_POSITIVE.route)
+                    } else {
+                        navController.navigate(Screen.FEEDBACK_NEGATIVE.route)
+                    }
+                }
+            )
+        }
+        composable(
+            route = Screen.EDIT_SNACK.route,
+            arguments = listOf(navArgument("snackId") { type = NavType.IntType })
+        ) {
+            NewSnackScreen(
+                label= "Editar refeição",
                 onBack = {
                     navController.navigateUp()
                 },
@@ -80,9 +101,14 @@ fun Route(
             route = Screen.SNACK_VIEW.route,
             arguments = listOf(navArgument("snackId") { type = NavType.IntType })
         ) {
-            SnackViewScreen(onBack = {
-                navController.navigateUp()
-            })
+            SnackViewScreen(
+                onBack = {
+                    navController.navigateUp()
+                },
+                onNavigationEdit = {
+                    navController.navigate("edit_snack/${it}")
+                }
+            )
         }
     }
 }

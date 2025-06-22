@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowOutward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,7 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dailydiet.R
 import com.example.dailydiet.composable.DailyDietButton
 import com.example.dailydiet.data.Snack
@@ -108,64 +108,82 @@ fun HomeScreen(
         }
     ) {
 
-
-        LazyColumn(
+        Box(
             modifier = Modifier
-                .padding(it)
-                .padding(horizontal = 24.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(32.dp),
-            contentPadding = PaddingValues(vertical = 32.dp),
+                .fillMaxSize()
+                .padding(it),
+            contentAlignment = Alignment.Center
         ) {
-            item {
-                CardPercent(
-                    modifier = Modifier.padding(top = 33.dp),
-                    onNavigationStatistics = onNavigationStatistics
+
+            if (uiState.isLoading) {
+
+                CircularProgressIndicator(
+                    strokeWidth = 4.dp,
+                    modifier = Modifier
+                        .size(20.dp)
                 )
-            }
 
-            item {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+            } else {
+
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                    contentPadding = PaddingValues(vertical = 32.dp),
                 ) {
-                    Text(
-                        text = "Refeições",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    DailyDietButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = onNavigationNewSnack,
-                        label = "Nova refeição",
-                        icon = Icons.Default.Add
-                    )
-                }
-            }
+                    item {
+                        CardPercent(
+                            modifier = Modifier.padding(top = 33.dp),
+                            onNavigationStatistics = onNavigationStatistics
+                        )
+                    }
 
-            items(items = groupedSnacks) { groupSnack ->
-                Column {
-                    Text(
-                        text = groupSnack.date,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-
-                        for (snack in groupSnack.snacksDay) {
-
-                            RegisterItem(
-                                snack = snack,
-                                onSelectItem = { onNavigationItem(it) }
+                    item {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = "Refeições",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
+                            DailyDietButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = onNavigationNewSnack,
+                                label = "Nova refeição",
+                                icon = Icons.Default.Add
+                            )
+                        }
+                    }
+
+                    items(items = groupedSnacks) { groupSnack ->
+                        Column {
+                            Text(
+                                text = groupSnack.date,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+
+                                for (snack in groupSnack.snacksDay) {
+
+                                    RegisterItem(
+                                        snack = snack,
+                                        onSelectItem = { onNavigationItem(it) }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+
 
     }
 }

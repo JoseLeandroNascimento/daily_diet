@@ -69,6 +69,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewSnackScreen(
+    label: String,
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
     viewModel: CreateSnackViewModel = hiltViewModel(),
@@ -142,7 +143,7 @@ fun NewSnackScreen(
                     ),
                     title = {
                         Text(
-                            text = "Nova refeição",
+                            text = label,
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
@@ -255,7 +256,7 @@ fun NewSnackScreen(
                             isError = viewModel.formState.time.error != null,
                             errorText = viewModel.formState.time.error,
                             keyboardType = KeyboardType.Number,
-                            imeAction =  ImeAction.Next,
+                            imeAction = ImeAction.Next,
                             interactionSource = timeInteraction,
                             readOnly = true,
                             onValueChange = {
@@ -381,7 +382,11 @@ fun NewSnackScreen(
                     onClick = {
                         viewModel.save()
                     },
-                    label = "Cadastrar refeição"
+                    label = if (viewModel.formState.snackId == null) {
+                        "Cadastrar refeição"
+                    } else {
+                        "Salvar alterações"
+                    }
                 )
             }
 
@@ -398,7 +403,7 @@ private fun NewSnackLightScreen() {
         dynamicColor = false,
         darkTheme = false
     ) {
-        NewSnackScreen(onBack = {}, onNavigateCreateSuccess = {})
+        NewSnackScreen(onBack = {}, onNavigateCreateSuccess = {}, label = "Nova refeição")
     }
 }
 
@@ -410,6 +415,6 @@ private fun NewSnackDarkScreen() {
         dynamicColor = false,
         darkTheme = true
     ) {
-        NewSnackScreen(onBack = {}, onNavigateCreateSuccess = {})
+        NewSnackScreen(onBack = {}, onNavigateCreateSuccess = {}, label = "Nova refeição")
     }
 }
