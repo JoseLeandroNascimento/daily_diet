@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,6 +34,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,8 +44,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dailydiet.R
 import com.example.dailydiet.composable.DailyDietButton
+import com.example.dailydiet.data.Snack
 import com.example.dailydiet.ui.theme.DailyDietTheme
 import com.example.dailydiet.ui.theme.Gray100
 import com.example.dailydiet.ui.theme.Gray200
@@ -51,6 +57,11 @@ import com.example.dailydiet.ui.theme.Gray500
 import com.example.dailydiet.ui.theme.GreenDark
 import com.example.dailydiet.ui.theme.GreenLight
 import com.example.dailydiet.ui.theme.GreenMid
+import com.example.dailydiet.ui.theme.RedMid
+import com.example.dailydiet.viewModel.HomeSnacksViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,10 +69,13 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigationStatistics: () -> Unit,
     onNavigationNewSnack: () -> Unit,
-    onNavigationItem: () -> Unit
+    onNavigationItem: (Int) -> Unit,
+    viewModel: HomeSnacksViewModel = hiltViewModel()
 ) {
 
+    val uiState = viewModel.uiState.collectAsState().value
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val groupedSnacks = uiState.success.data.collectAsState(initial = emptyList()).value
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -128,10 +142,10 @@ fun HomeScreen(
                 }
             }
 
-            items(count = 4) {
+            items(items = groupedSnacks) { groupSnack ->
                 Column {
                     Text(
-                        text = "12.08.22",
+                        text = groupSnack.date,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -140,11 +154,14 @@ fun HomeScreen(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        RegisterItem(onSelectItem = onNavigationItem)
-                        RegisterItem(onSelectItem = onNavigationItem)
-                        RegisterItem(onSelectItem = onNavigationItem)
-                        RegisterItem(onSelectItem = onNavigationItem)
-                        RegisterItem(onSelectItem = onNavigationItem)
+
+                        for (snack in groupSnack.snacksDay) {
+
+                            RegisterItem(
+                                snack = snack,
+                                onSelectItem = { onNavigationItem(it) }
+                            )
+                        }
                     }
                 }
             }
@@ -154,7 +171,16 @@ fun HomeScreen(
 }
 
 @Composable
-fun RegisterItem(modifier: Modifier = Modifier, onSelectItem: () -> Unit) {
+fun RegisterItem(
+    modifier: Modifier = Modifier,
+    onSelectItem: (Int) -> Unit,
+    snack: Snack
+) {
+
+    val hora = remember(snack.timestamp) {
+        SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(snack.timestamp))
+    }
+
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background,
@@ -163,7 +189,7 @@ fun RegisterItem(modifier: Modifier = Modifier, onSelectItem: () -> Unit) {
         border = BorderStroke(width = 1.dp, color = Gray500),
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onSelectItem)
+            .clickable(onClick = { onSelectItem(snack.id) })
     ) {
 
         Row(
@@ -182,7 +208,7 @@ fun RegisterItem(modifier: Modifier = Modifier, onSelectItem: () -> Unit) {
             ) {
 
                 Text(
-                    text = "20:00",
+                    text = hora,
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -192,14 +218,20 @@ fun RegisterItem(modifier: Modifier = Modifier, onSelectItem: () -> Unit) {
                     thickness = 1.dp
                 )
                 Text(
-                    text = "X-tudo",
+                    text = snack.name,
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
             Box(
                 modifier = Modifier
                     .size(14.dp)
-                    .background(color = GreenMid, shape = CircleShape)
+                    .background(
+                        color = if (snack.isInside) {
+                            GreenMid
+                        } else {
+                            RedMid
+                        }, shape = CircleShape
+                    )
             )
         }
 

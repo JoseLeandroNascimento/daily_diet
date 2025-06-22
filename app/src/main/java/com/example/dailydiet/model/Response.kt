@@ -1,15 +1,12 @@
 package com.example.dailydiet.model
 
-import com.example.dailydiet.data.Snack
+sealed class Response<out T> {
 
-sealed class Response {
-
-    data class Success(
-        val data: Snack
-    ): Response()
+    data class Success<out T>(
+        val data: T
+    ) : Response<T>()
 
     data class Error(
-        val message: String
-    ): Response()
-
+        val message: String?
+    ) : Response<Nothing>()
 }

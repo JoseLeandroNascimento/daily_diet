@@ -3,8 +3,10 @@ package com.example.dailydiet
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.dailydiet.screen.FeedbackNegativeScreen
 import com.example.dailydiet.screen.FeedbackPositiveScreen
 import com.example.dailydiet.screen.HomeScreen
@@ -22,7 +24,9 @@ fun Route(
         navController = navController,
         startDestination = Screen.HOME.route
     ) {
-        composable(Screen.HOME.route) {
+        composable(
+            Screen.HOME.route,
+        ) {
             HomeScreen(
                 onNavigationStatistics = {
                     navController.navigate(Screen.STATISTIC.route)
@@ -31,7 +35,7 @@ fun Route(
                     navController.navigate(Screen.NEW_SNACK.route)
                 },
                 onNavigationItem = {
-                    navController.navigate(Screen.SNACK_VIEW.route)
+                    navController.navigate("snack_view/${it}")
                 }
             )
         }
@@ -72,7 +76,10 @@ fun Route(
                 }
             }
         }
-        composable(Screen.SNACK_VIEW.route) {
+        composable(
+            route = Screen.SNACK_VIEW.route,
+            arguments = listOf(navArgument("snackId") { type = NavType.IntType })
+        ) {
             SnackViewScreen(onBack = {
                 navController.navigateUp()
             })
