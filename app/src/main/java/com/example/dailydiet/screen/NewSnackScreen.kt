@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -25,8 +24,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -53,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.dailydiet.composable.DailyDietButton
+import com.example.dailydiet.composable.DailyDietTextField
 import com.example.dailydiet.composable.DailyDietToggleButton
 import com.example.dailydiet.ui.theme.DailyDietTheme
 import com.example.dailydiet.ui.theme.Gray200
@@ -178,92 +176,52 @@ fun NewSnackScreen(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    OutlinedTextField(
+                    DailyDietTextField(
                         modifier = Modifier.fillMaxWidth(),
                         isError = viewModel.formState.name.error != null,
-                        supportingText = { viewModel.formState.name.error?.let { Text(text = it) } },
+                        errorText = viewModel.formState.name.error,
                         value = viewModel.formState.name.value,
-                        shape = RoundedCornerShape(6.dp),
                         onValueChange = {
                             viewModel.nameUpdate(it)
                         },
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next,
-                            keyboardType = KeyboardType.Text
-                        ),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Gray500,
-                            focusedBorderColor = Gray500,
-                        ),
-                        maxLines = 1,
-                        label = {
-                            Text(
-                                text = "Nome",
-                                style = MaterialTheme.typography.titleSmall,
-                                color = Gray200
-                            )
-                        }
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next,
+                        label = "Nome"
                     )
 
-                    OutlinedTextField(
+                    DailyDietTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = viewModel.formState.description.value,
                         isError = viewModel.formState.description.error != null,
-                        supportingText = { viewModel.formState.description.error?.let { Text(text = it) } },
-                        shape = RoundedCornerShape(6.dp),
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next,
-                            keyboardType = KeyboardType.Text
-                        ),
+                        errorText = viewModel.formState.description.error,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next,
                         onValueChange = {
                             viewModel.descriptionUpdate(it)
                         },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Gray500,
-                            focusedBorderColor = Gray500,
-                        ),
                         minLines = 4,
                         maxLines = 4,
-                        label = {
-                            Text(
-                                text = "Descrição",
-                                style = MaterialTheme.typography.titleSmall,
-                                color = Gray200
-                            )
-                        }
+                        label = "Descrição"
                     )
 
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        OutlinedTextField(
+                        DailyDietTextField(
                             modifier = Modifier
                                 .weight(1f),
                             value = viewModel.formState.date.value,
                             isError = viewModel.formState.date.error != null,
-                            supportingText = { viewModel.formState.date.error?.let { Text(text = it) } },
-                            shape = RoundedCornerShape(8.dp),
+                            errorText = viewModel.formState.date.error,
+
                             onValueChange = {
                                 viewModel.dateUpdate(it)
                             },
                             interactionSource = dateInteraction,
                             readOnly = true,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = Gray500,
-                                focusedBorderColor = Gray500,
-                            ),
-                            keyboardOptions = KeyboardOptions(
-                                imeAction = ImeAction.Next,
-                                keyboardType = KeyboardType.Number
-                            ),
-                            maxLines = 1,
-                            label = {
-                                Text(
-                                    text = "Data",
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = Gray200
-                                )
-                            }
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next,
+                            label = "Data"
                         )
 
                         if (showDate) {
@@ -291,33 +249,19 @@ fun NewSnackScreen(
                                 )
                             }
                         }
-                        OutlinedTextField(
+                        DailyDietTextField(
                             modifier = Modifier.weight(1f),
                             value = viewModel.formState.time.value,
                             isError = viewModel.formState.time.error != null,
-                            supportingText = { viewModel.formState.time.error?.let { Text(text = it) } },
-                            shape = RoundedCornerShape(6.dp),
-                            keyboardOptions = KeyboardOptions(
-                                imeAction = ImeAction.Next,
-                                keyboardType = KeyboardType.Number
-                            ),
+                            errorText = viewModel.formState.time.error,
+                            keyboardType = KeyboardType.Number,
+                            imeAction =  ImeAction.Next,
                             interactionSource = timeInteraction,
                             readOnly = true,
                             onValueChange = {
                                 viewModel.timeUpdate(it)
                             },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = Gray500,
-                                focusedBorderColor = Gray500,
-                            ),
-                            maxLines = 1,
-                            label = {
-                                Text(
-                                    text = "Hora",
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = Gray200
-                                )
-                            }
+                            label = "Hora"
                         )
 
                         if (showTime) {

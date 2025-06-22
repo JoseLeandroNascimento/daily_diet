@@ -8,7 +8,7 @@ class NameValidator {
 
             var error: String? = null
 
-            if (value.isEmpty()) {
+            if (value.isBlank()) {
                 error = "O nome é obrigatório"
             }
 

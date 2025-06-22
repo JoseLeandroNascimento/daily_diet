@@ -7,7 +7,7 @@ class DescriptionValidator {
         fun validator(value: String): String? {
             var error: String? = null
 
-            if (value.isEmpty()) {
+            if (value.isBlank()) {
                 error = "A descrição é obrigatório"
             }
 
