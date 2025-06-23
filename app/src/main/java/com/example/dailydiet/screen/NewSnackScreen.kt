@@ -62,9 +62,9 @@ import com.example.dailydiet.ui.theme.GreenMid
 import com.example.dailydiet.ui.theme.RedLight
 import com.example.dailydiet.ui.theme.RedMid
 import com.example.dailydiet.viewModel.CreateSnackViewModel
-import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,8 +93,16 @@ fun NewSnackScreen(
 
     val dataFormatada by remember {
         derivedStateOf {
-            stateDatePicker.selectedDateMillis?.let {
-                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(it))
+            stateDatePicker.selectedDateMillis?.let { millis ->
+
+                val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                calendar.timeInMillis = millis
+
+                val dia = calendar.get(Calendar.DAY_OF_MONTH)
+                val mes = calendar.get(Calendar.MONTH) + 1
+                val ano = calendar.get(Calendar.YEAR)
+
+                "%02d/%02d/%d".format(dia, mes, ano)
             }
         }
     }
