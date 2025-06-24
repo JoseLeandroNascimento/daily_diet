@@ -15,6 +15,15 @@ interface SnackDao {
     @Update
     suspend fun update(data: Snack)
 
+    @Query("SELECT COUNT(*) FROM snack")
+    suspend fun countAllSnack(): Int
+
+    @Query("SELECT COUNT(*) FROM snack Where isInside = 1")
+    suspend fun countAllSnackPositive(): Int
+
+    @Query("SELECT COUNT(*) FROM snack Where isInside = 0")
+    suspend fun countAllSnackNegative(): Int
+
     @Query("SELECT * FROM Snack ORDER BY timestamp DESC")
     fun findAll(): Flow<List<Snack>>
 

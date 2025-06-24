@@ -57,7 +57,10 @@ import com.example.dailydiet.ui.theme.Gray500
 import com.example.dailydiet.ui.theme.GreenDark
 import com.example.dailydiet.ui.theme.GreenLight
 import com.example.dailydiet.ui.theme.GreenMid
+import com.example.dailydiet.ui.theme.RedDark
+import com.example.dailydiet.ui.theme.RedLight
 import com.example.dailydiet.ui.theme.RedMid
+import com.example.dailydiet.util.percent
 import com.example.dailydiet.viewModel.HomeSnacksViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -135,6 +138,8 @@ fun HomeScreen(
                     item {
                         CardPercent(
                             modifier = Modifier.padding(top = 33.dp),
+                            percentagePositive = uiState.snackPositiveStatic,
+                            percentageNegative = uiState.snackNegativeStatic,
                             onNavigationStatistics = onNavigationStatistics
                         )
                     }
@@ -258,6 +263,8 @@ fun RegisterItem(
 
 @Composable
 fun CardPercent(
+    percentagePositive: Double,
+    percentageNegative: Double,
     modifier: Modifier = Modifier,
     onNavigationStatistics: () -> Unit
 ) {
@@ -265,7 +272,13 @@ fun CardPercent(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = GreenLight, shape = RoundedCornerShape(8.dp))
+            .background(
+                color = if (percentagePositive >= percentageNegative) {
+                    GreenLight
+                } else {
+                    RedLight
+                }, shape = RoundedCornerShape(8.dp)
+            )
             .padding(4.dp)
     ) {
 
@@ -278,7 +291,7 @@ fun CardPercent(
         ) {
             Text(
                 modifier = Modifier.wrapContentWidth(),
-                text = "90,86%",
+                text = percentagePositive.percent(),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
                 color = Gray100
@@ -296,7 +309,11 @@ fun CardPercent(
             onClick = onNavigationStatistics
         ) {
             Icon(
-                tint = GreenDark,
+                tint = if (percentagePositive >= percentageNegative) {
+                    GreenDark
+                } else {
+                    RedDark
+                },
                 imageVector = Icons.Default.ArrowOutward,
                 contentDescription = null
             )

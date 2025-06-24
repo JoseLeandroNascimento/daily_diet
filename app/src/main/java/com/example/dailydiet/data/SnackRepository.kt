@@ -3,6 +3,7 @@ package com.example.dailydiet.data
 import com.example.dailydiet.model.Response
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 
 class SnackRepository @Inject constructor(private val snackDao: SnackDao) {
@@ -39,6 +40,34 @@ class SnackRepository @Inject constructor(private val snackDao: SnackDao) {
 
             return Response.Error(message = e.message ?: "Não foi possível carregar os dados")
         }
+    }
+
+    suspend fun percentSnackPositive(): Double {
+        val total = countAllSnack().toDouble()
+        val snackPositive = countAllSnackPositive()
+        val percentage = (snackPositive * 100) / total
+
+        return percentage
+    }
+
+    suspend fun percentSnackNegative(): Double {
+        val total = countAllSnack().toDouble()
+        val snackNegative = countAllSnackNegative()
+        val percentage = (snackNegative * 100) / total
+
+        return percentage
+    }
+
+    suspend fun countAllSnack(): Int {
+        return snackDao.countAllSnack()
+    }
+
+    suspend fun countAllSnackPositive(): Int {
+        return snackDao.countAllSnackPositive()
+    }
+
+    suspend fun countAllSnackNegative(): Int {
+        return snackDao.countAllSnackNegative()
     }
 
     suspend fun finById(id: Int): Response<Snack> {

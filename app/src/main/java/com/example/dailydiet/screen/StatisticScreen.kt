@@ -1,8 +1,6 @@
 package com.example.dailydiet.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -37,34 +35,57 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dailydiet.ui.theme.DailyDietTheme
 import com.example.dailydiet.ui.theme.Gray100
 import com.example.dailydiet.ui.theme.Gray200
 import com.example.dailydiet.ui.theme.Gray600
 import com.example.dailydiet.ui.theme.GreenDark
 import com.example.dailydiet.ui.theme.GreenLight
+import com.example.dailydiet.ui.theme.RedDark
 import com.example.dailydiet.ui.theme.RedLight
+import com.example.dailydiet.util.percent
+import com.example.dailydiet.viewModel.StatisticViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StatisticScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
+fun StatisticScreen(
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit,
+    viewModel: StatisticViewModel = hiltViewModel()
+) {
+
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
     Surface(
         modifier = modifier.fillMaxSize(),
     ) {
         Scaffold(
-            containerColor = GreenLight,
+            containerColor = if (uiState.snackPositiveStatic >= uiState.snackNegativeStatic) {
+                GreenLight
+            } else {
+                RedLight
+            },
             topBar = {
                 LargeTopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = GreenLight
+                        containerColor = if (uiState.snackPositiveStatic >= uiState.snackNegativeStatic) {
+                            GreenLight
+                        } else {
+                            RedLight
+                        }
                     ),
                     navigationIcon = {
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = null,
-                                tint = GreenDark
+                                tint = if (uiState.snackPositiveStatic >= uiState.snackNegativeStatic) {
+                                    GreenDark
+                                } else {
+                                    RedDark
+                                }
                             )
                         }
                     },
@@ -77,7 +98,7 @@ fun StatisticScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         ) {
                             Text(
                                 modifier = Modifier.wrapContentWidth(),
-                                text = "90,86%",
+                                text = uiState.snackPositiveStatic.percent(),
                                 style = MaterialTheme.typography.headlineLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = Gray100
@@ -93,20 +114,19 @@ fun StatisticScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                 )
             }
         ) {
-            Box(
+            Surface(
+                color = MaterialTheme.colorScheme.background,
+                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
                 modifier = Modifier
-                    .padding(it)
                     .fillMaxSize()
-                    .background(
-                        color = MaterialTheme.colorScheme.background,
-                        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
-                    )
-                    .padding(horizontal = 30.dp),
+                    .padding(it)
+
             ) {
 
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(horizontal = 30.dp)
                         .verticalScroll(state = rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -114,6 +134,7 @@ fun StatisticScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     Text(
                         modifier = Modifier.padding(top = 23.dp),
                         text = "Estatísticas gerais",
+                        color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleSmall,
                     )
 
@@ -138,10 +159,13 @@ fun StatisticScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                                 text = "22",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 20.sp
                             )
                             Text(
                                 text = "melhor sequência de pratos dentro da dieta",
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.titleSmall,
                             )
                         }
@@ -163,14 +187,17 @@ fun StatisticScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "109",
+                                text = uiState.countAll.toString(),
                                 style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 20.sp
                             )
                             Text(
                                 text = "refeições registradas",
                                 maxLines = 3,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 overflow = TextOverflow.Ellipsis,
                                 style = MaterialTheme.typography.titleSmall,
                             )
@@ -202,7 +229,8 @@ fun StatisticScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
 
                             ) {
                                 Text(
-                                    text = "99",
+                                    text = uiState.countAllSnackPositive.toString(),
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.sp
@@ -210,6 +238,7 @@ fun StatisticScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                                 Text(
                                     modifier = Modifier.padding(top = 8.dp),
                                     text = "refeições dentro da dieta",
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     textAlign = TextAlign.Center,
                                     maxLines = 3,
                                     overflow = TextOverflow.Ellipsis,
@@ -237,9 +266,10 @@ fun StatisticScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "10",
+                                    text = uiState.countAllSnackNegative.toString(),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 20.sp
                                 )
                                 Text(
@@ -247,6 +277,7 @@ fun StatisticScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                                     text = "refeições fora da dieta",
                                     textAlign = TextAlign.Center,
                                     maxLines = 3,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.titleSmall,
                                 )

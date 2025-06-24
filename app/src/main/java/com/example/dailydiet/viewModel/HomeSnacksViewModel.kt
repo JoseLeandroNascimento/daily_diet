@@ -25,6 +25,8 @@ data class SnackGroupDay(
 
 data class HomeUiState(
     var isLoading: Boolean = false,
+    val snackPositiveStatic: Double = 0.0,
+    val snackNegativeStatic: Double = 0.0,
     val success: Response.Success<Flow<List<SnackGroupDay>>> = Response.Success(data = emptyFlow()),
     val error: Response.Error = Response.Error(message = null)
 )
@@ -46,7 +48,17 @@ class HomeSnacksViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+
             val response = repo.findAll()
+            val snackPositiveStatic = repo.percentSnackPositive()
+            val snackNegativeStatic = repo.percentSnackNegative()
+
+            _uiState.update {
+                it.copy(
+                    snackPositiveStatic = snackPositiveStatic,
+                    snackNegativeStatic = snackNegativeStatic
+                )
+            }
 
             when (response) {
                 is Response.Success -> {
